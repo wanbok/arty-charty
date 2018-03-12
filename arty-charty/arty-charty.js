@@ -231,7 +231,7 @@ class ArtyCharty extends Component {
                 this.animateClickFeedback(tmpX - px, tmpY - py + CHART_HEIGHT / 2);
               }
               this.props.data.some((d, idx) => {
-                if (d.type.slice(0,4) === 'area' || d.type === 'line' || d.type.substr(0, 6) === 'spline') {
+                if (d.type.slice(0,4) === 'area' || d.type === 'line' || d.type === 'dot' || d.type.substr(0, 6) === 'spline') {
                   let closestMarker = findClosestPointIndexWithinRadius(d.markerCords, tmpX - px, tmpY - py + CHART_HEIGHT / 2, MARKER_RADIUS_SQUARED);
                   if (closestMarker !== undefined) {
                     this.onMarkerClick(idx, closestMarker);
@@ -376,11 +376,11 @@ makeMarkers(markerCords, chartIdx) {
 }
 
 makeMarker(cx, cy, chartIdx, pointIdx) {
-    return (
-      <AmimatedCirclesMarker key={pointIdx} cx={cx} cy={cy} baseColor={this.props.data[chartIdx].lineColor || 'rgba(0,0,0,.5)'}
-       active={this.state.activeMarker.chartIdx === chartIdx && this.state.activeMarker.pointIdx === pointIdx} />
-    );
-  }
+  return (
+    <AmimatedCirclesMarker key={pointIdx} cx={cx} cy={cy} baseColor={this.props.data[chartIdx].lineColor || 'rgba(0,0,0,.5)'}
+      active={this.state.activeMarker.chartIdx === chartIdx && this.state.activeMarker.pointIdx === pointIdx} />
+  );
+}
 
 makeYaxis(num, minVal, maxVal) {
   const width = this.props.width || Dimensions.get('window').width
@@ -468,6 +468,14 @@ makeLinearGradientForAreaChart(chart, idx, width) {
                   stroke={chart.lineColor || DEFAULT_LINE_COLOR}
                   strokeWidth={3}
                   fill="transparent" />);
+            // Make marker coords:
+            markerCords = this.makeMarkersCoords(chart, width, this.state.t);
+            chart.markerCords = markerCords;
+            charts.push(this.makeMarkers(markerCords, idx));
+            break;
+          case 'dot':
+            chartData = makeLineChartPath(chart, width, this.state.t, this.maxValue, CHART_HEIGHT, CHART_HEIGHT_OFFSET, MARKER_RADIUS, this.pointsOnScreen);
+            this.maxScroll = Math.max(this.maxScroll, chartData.maxScroll || 0);
             // Make marker coords:
             markerCords = this.makeMarkersCoords(chart, width, this.state.t);
             chart.markerCords = markerCords;

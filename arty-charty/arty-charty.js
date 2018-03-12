@@ -13,7 +13,7 @@ import Svg,{
     Stop,
     Text
 } from 'react-native-svg';
-import {complement, Tweener, AmimatedCirclesMarker, makeBars3DChartPath, makeBarsChartPath, makeAreaChartPath, makeLineChartPath, makeSplineChartPath, makeCandlestickChartPath, makeCandlestickChart, inerpolateColorsFixedAlpha, makeSpline, computeSplineControlPoints, makeCircle, getMinMaxValues, getMinMaxValuesCandlestick, getMinMaxValuesRange, getMaxSumStack, getMaxSumBars3d, findRectangleIndexContainingPoint, findClosestPointIndexWithinRadius, makeAreaRangeChartPath, makeLineStepChartPath, makeStackedBarsChartPath} from '.';
+import {complement, Tweener, AmimatedCirclesMarker, CirclesMarker, makeBars3DChartPath, makeBarsChartPath, makeAreaChartPath, makeLineChartPath, makeSplineChartPath, makeCandlestickChartPath, makeCandlestickChart, inerpolateColorsFixedAlpha, makeSpline, computeSplineControlPoints, makeCircle, getMinMaxValues, getMinMaxValuesCandlestick, getMinMaxValuesRange, getMaxSumStack, getMaxSumBars3d, findRectangleIndexContainingPoint, findClosestPointIndexWithinRadius, makeAreaRangeChartPath, makeLineStepChartPath, makeStackedBarsChartPath} from '.';
 import {Spring,Bounce,EasingFunctions} from '../timing-functions';
 
 const SELCTED_MARKER_ANIMATION_DURATION = 1000;
@@ -369,17 +369,15 @@ makeMarkersCoords(chart, width, t) {
   return markerCords;
 }
 
-makeMarkers(markerCords, chartIdx) {
+makeMarkers(markerCords, chartIdx, isAnimating=true) {
   return markerCords.map((d, idx) => {
-    return this.makeMarker(d.x, d.y, chartIdx, idx);
+    return this.makeMarker(d.x, d.y, chartIdx, idx, isAnimating);
   });
 }
 
-makeMarker(cx, cy, chartIdx, pointIdx) {
-  return (
-    <AmimatedCirclesMarker key={pointIdx} cx={cx} cy={cy} baseColor={this.props.data[chartIdx].lineColor || 'rgba(0,0,0,.5)'}
-      active={this.state.activeMarker.chartIdx === chartIdx && this.state.activeMarker.pointIdx === pointIdx} />
-  );
+makeMarker(cx, cy, chartIdx, pointIdx, isAnimating=true) {
+  return (<CirclesMarker key={pointIdx} cx={cx} cy={cy} baseColor={this.props.data[chartIdx].lineColor || 'rgba(0,0,0,.5)'}
+    active={this.state.activeMarker.chartIdx === chartIdx && this.state.activeMarker.pointIdx === pointIdx} />);
 }
 
 makeYaxis(num, minVal, maxVal) {
@@ -479,7 +477,7 @@ makeLinearGradientForAreaChart(chart, idx, width) {
             // Make marker coords:
             markerCords = this.makeMarkersCoords(chart, width, this.state.t);
             chart.markerCords = markerCords;
-            charts.push(this.makeMarkers(markerCords, idx));
+            charts.push(this.makeMarkers(markerCords, idx, false));
             break;
           case 'step':
             chartData = makeLineStepChartPath(chart, width, this.state.t, this.maxValue, CHART_HEIGHT, CHART_HEIGHT_OFFSET, MARKER_RADIUS, this.pointsOnScreen);

@@ -12,7 +12,7 @@ import Svg,{
 import {Spring, EasingFunctions} from '../timing-functions';
 import {lightenColor, Tweener, makeCircle} from '.';
 
-const MARKER_RADIUS = 10;
+const MARKER_RADIUS = 5;
 
 class CirclesMarker extends Component {
   constructor(props) {
